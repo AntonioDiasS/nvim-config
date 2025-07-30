@@ -1,0 +1,12 @@
+# Ignorar a pasta onde o Lazy baixa e gerencia os plugins.
+# Esta é a pasta mais importante a ser ignorada!
+/lazy/
+
+# Ignorar o diretório de "undo" persistente
+/undodir/
+
+# Ignorar arquivos de sistema operacional
+.DS_Store
+
+# Arquivos de sessão do Neovim (se você usar)
+*.session
