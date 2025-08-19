@@ -25,6 +25,7 @@ opt.ignorecase = true    -- Ignorar maiúsculas/minúsculas na busca
 opt.smartcase = true     -- A menos que a busca contenha uma letra maiúscula
 
 -- Outros
+opt.clipboard = "unnamedplus"
 opt.scrolloff = 8              -- Mantém 8 linhas de contexto acima/abaixo do cursor
 opt.swapfile = false           -- Desabilita arquivos de swap
 opt.backup = false             -- Desabilita backups
@@ -34,3 +35,4 @@ opt.mouse = "a"                -- Habilita o uso do mouse
 opt.splitright = true          -- Abre splits verticais à direita
 opt.splitbelow = true          -- Abre splits horizontais abaixo
 opt.updatetime = 250           -- Menor tempo de atualização para plugins
+
