@@ -1,35 +1,28 @@
-  -- This file combines LSP (Language Server Protocol) and Autocompletion configurations.
+
+-- This file combines LSP (Language Server Protocol) and Autocompletion configurations.
 -- LSP provides code intelligence (go to definition, diagnostics, etc.).
 -- Autocompletion provides suggestions as you type.
 
 return {
   -- ===================================================================
   -- I. LSP CONFIGURATION
-  -- Manages language servers, providing features like diagnostics and code navigation.
   -- ===================================================================
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      -- Automatically install and manage LSPs.
       { "williamboman/mason.nvim", opts = {} },
       "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
-
-      -- Shows LSP progress in the statusline.
       { "j-hui/fidget.nvim", opts = {} },
-
-      -- Crucial dependency for nvim-cmp to understand LSP capabilities.
       "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
-      -- This function is executed when an LSP server attaches to a buffer.
-      -- It sets up keymaps for LSP-related actions.
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
         callback = function(event)
-          local map = function(keys, func, desc) vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc }) end
-
-          -- Keymaps for LSP navigation and actions.
+          local map = function(keys, func, desc)
+            vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+          end
           map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
           map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
           map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
@@ -42,60 +35,68 @@ return {
         end,
       })
 
-      -- Get capabilities from nvim-cmp and extend them for LSP.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-      -- List of language servers to be installed automatically by Mason.
-      -- Add any new language servers you need here.
       local servers = {
         lua_ls = {
-          settings = { Lua = { completion = { callSnippet = "Replace" } } },
+          settings = {
+            Lua = {
+              completion = {
+                callSnippet = "Replace",
+                keywordSnippet = "Replace",
+              },
+              diagnostics = { globals = { "vim" } },
+            },
+          },
         },
-        -- Example for other servers:
         clangd = {},
-        -- tsserver = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
       }
 
-      -- Ensure the servers and additional tools are installed.
       local ensure_installed = vim.tbl_keys(servers)
-      vim.list_extend(ensure_installed, { "stylua" }) -- Add the Lua formatter
+      vim.list_extend(ensure_installed, { "stylua" })
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-      -- Setup mason-lspconfig to automatically configure servers.
       require("mason-lspconfig").setup({
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
-            -- Combine default capabilities with server-specific ones.
             server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
             require("lspconfig")[server_name].setup(server)
           end,
         },
+      })
+
+      -- Diagnóstico mais limpo
+      vim.diagnostic.config({
+        virtual_text = { spacing = 4, prefix = "●" },
+        signs = true,
+        underline = true,
+        update_in_insert = false,
+        severity_sort = true,
       })
     end,
   },
 
   -- ===================================================================
   -- II. AUTOCOMPLETION CONFIGURATION
-  -- Manages the autocompletion engine (nvim-cmp) and its sources.
   -- ===================================================================
   {
     "hrsh7th/nvim-cmp",
     event = "InsertEnter",
     dependencies = {
-      -- Snippet engine
       { "L3MON4D3/LuaSnip", build = "make install_jsregexp" },
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
       "L3MON4D3/LuaSnip",
+      "onsails/lspkind.nvim", -- ícones bonitos no completion
     },
     config = function()
       local cmp = require("cmp")
       local luasnip = require("luasnip")
+      local lspkind = require("lspkind")
+
       luasnip.config.setup({})
 
       cmp.setup({
@@ -105,46 +106,60 @@ return {
           end,
         },
         completion = {
-          -- Show completion menu even when no item is selected.
           completeopt = "menu,menuone,noinsert",
         },
-        -- Keymappings for the completion menu.
         mapping = cmp.mapping.preset.insert({
-          ["<C-k>"] = cmp.mapping.select_next_item(), -- Select the next item
-          ["<C-j>"] = cmp.mapping.select_prev_item(), -- Select the previous item
-          ["<C-u>"] = cmp.mapping.scroll_docs(-4), -- Scroll documentation back
-          ["<C-d>"] = cmp.mapping.scroll_docs(4), -- Scroll documentation forward
-          ["<CR>"] = cmp.mapping.confirm({ select = true }), -- Confirm selection
-          ["<C-e"] = cmp.mapping.abort(), --Cancela a autocompletação
-          ["<C-Space>"] = cmp.mapping.complete({}), -- Manually trigger completion
-          -- Navigate through snippets
-           ["<Tab>"] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.select_next_item()
-        elseif require("luasnip").expand_or_jumpable() then
-          require("luasnip").expand_or_jump()
-        else
-          fallback()
-        end
-      end, { "i", "s" }),
-      ["<S-Tab>"] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.select_prev_item()
-        elseif require("luasnip").jumpable(-1) then
-          require("luasnip").jump(-1)
-        else
-          fallback()
-        end
-      end, { "i", "s" }),
-    }),
-        -- Sources for autocompletion, in order of priority.
-        sources = {
-          { name = "nvim_lsp" }, -- Source from the Language Server
-          { name = "luasnip" }, -- Source from the snippet engine
-          { name = "buffer" },
-          { name = "path" },     -- Source for file system paths
+          ["<C-k>"] = cmp.mapping.select_next_item(),
+          ["<C-j>"] = cmp.mapping.select_prev_item(),
+          ["<C-u>"] = cmp.mapping.scroll_docs(-4),
+          ["<C-d>"] = cmp.mapping.scroll_docs(4),
+          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+          ["<C-e>"] = cmp.mapping.abort(),
+          ["<C-Space>"] = cmp.mapping.complete({}),
+          ["<Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+          ["<S-Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+        }),
+
+        -- 🔑 Aqui está a melhora das sugestões
+        sources = cmp.config.sources({
+          { name = "nvim_lsp", max_item_count = 20 }, -- sugestões do LSP (principais)
+          { name = "luasnip", max_item_count = 5 },   -- snippets
+        }, {
+          { name = "buffer", keyword_length = 4, max_item_count = 5 }, -- só sugere buffer depois de 4 letras
+          { name = "path" }, -- arquivos e pastas
+        }),
+
+        formatting = {
+          format = lspkind.cmp_format({
+            mode = "symbol_text",
+            maxwidth = 50,
+            ellipsis_char = "...",
+          }),
+        },
+
+        experimental = {
+          ghost_text = { hl_group = "CmpGhostText" }, -- preview inline da melhor sugestão
         },
       })
+
+      -- Cor discreta para ghost text
+      vim.api.nvim_set_hl(0, "CmpGhostText", { link = "Comment", default = true })
     end,
   },
 }
