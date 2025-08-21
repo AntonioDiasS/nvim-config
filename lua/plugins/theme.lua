@@ -1,8 +1,16 @@
-return {
-  "folke/tokyonight.nvim",
-  lazy = false, -- Garante que o tema seja carregado na inicialização
-  priority = 1000, -- Prioridade alta para carregar antes de outros plugins
+return{
+  "catppuccin/nvim",
+  name = "catppuccin",
+  priority = 1000,
   config = function()
-    vim.cmd.colorscheme("tokyonight")
+    require("catppuccin").setup({
+      flavour = "mocha", -- latte, frappe, macchiato, mocha
+      integrations = {
+        nvimtree = true, -- ativa o tema no nvim-tree
+      },
+    })
+
+    -- aplica o tema
+    vim.cmd.colorscheme("catppuccin")
   end,
 }
