@@ -1,8 +1,3 @@
-
--- This file combines LSP (Language Server Protocol) and Autocompletion configurations.
--- LSP provides code intelligence (go to definition, diagnostics, etc.).
--- Autocompletion provides suggestions as you type.
-
 return {
   -- ===================================================================
   -- I. LSP CONFIGURATION
@@ -13,7 +8,7 @@ return {
       { "williamboman/mason.nvim", opts = {} },
       "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
-      { "j-hui/fidget.nvim", opts = {} },
+      { "j-hui/fidget.nvim",       opts = {} },
       "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
@@ -23,6 +18,10 @@ return {
           local map = function(keys, func, desc)
             vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
           end
+
+          -- pega o client do servidor conectado
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+
           map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
           map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
           map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
@@ -32,6 +31,13 @@ return {
           map("<leader>Lr", vim.lsp.buf.rename, "[R]e[n]ame")
           map("<leader>Lc", vim.lsp.buf.code_action, "[C]ode [A]ction")
           map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+
+          -- Mapeamento para formatação de código (se suportado pelo servidor)
+          if client and client.supports_method("textDocument/formatting") then
+            map("<leader>Lf", function()
+              vim.lsp.buf.format({ async = true })
+            end, "[F]ormat Document")
+          end
         end,
       })
 
@@ -136,13 +142,12 @@ return {
           end, { "i", "s" }),
         }),
 
-        -- 🔑 Aqui está a melhora das sugestões
         sources = cmp.config.sources({
-          { name = "nvim_lsp", max_item_count = 20 }, -- sugestões do LSP (principais)
-          { name = "luasnip", max_item_count = 5 },   -- snippets
+          { name = "nvim_lsp", max_item_count = 20 },
+          { name = "luasnip",  max_item_count = 5 },
         }, {
-          { name = "buffer", keyword_length = 4, max_item_count = 5 }, -- só sugere buffer depois de 4 letras
-          { name = "path" }, -- arquivos e pastas
+          { name = "buffer", keyword_length = 4, max_item_count = 5 },
+          { name = "path" },
         }),
 
         formatting = {
@@ -154,11 +159,10 @@ return {
         },
 
         experimental = {
-          ghost_text = { hl_group = "CmpGhostText" }, -- preview inline da melhor sugestão
+          ghost_text = { hl_group = "CmpGhostText" },
         },
       })
 
-      -- Cor discreta para ghost text
       vim.api.nvim_set_hl(0, "CmpGhostText", { link = "Comment", default = true })
     end,
   },
