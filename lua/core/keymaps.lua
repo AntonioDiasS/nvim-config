@@ -21,7 +21,7 @@ keymap("n", "<leader>a", "0ggVG",{desc = "Selecionar todo o conteúdo do arquivo
 --Selecionar todo o texto do buffer
 keymap("n", "<leader>ya", ":%y<CR>", { desc = "Copiar todo o conteúdo do arquivo" })
 --Salvar arquivo
-keymap("n", "<leader>yw", ":w<CR>", { desc = "Salvar Arquivo" })
+keymap("n", "<leader>w", ":w<CR>", { desc = "Salvar Arquivo" })
 --Fechar arquivo salvando
 keymap("n", "<leader>q", ":wq<CR>", { desc = "Sair e salvar" })
 --Fechar arquivo sem forçadamente
