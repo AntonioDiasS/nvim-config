@@ -4,7 +4,7 @@ return {
   version = "*",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   keys = {
-    { "<leader>e", "<cmd>NvimTreeToggle<CR>", desc = "Abrir/Fechar NvimTree" },
+    { "<leader>e", "<cmd>NvimTreeToggle<CR>", desc = "Open/Close NvimTree" },
   },
   opts = {
     sort = {

@@ -1,4 +1,4 @@
-return {
+ return{
   -- ===================================================================
   -- I. LSP CONFIGURATION
   -- ===================================================================
@@ -140,6 +140,9 @@ return {
               fallback()
             end
           end, { "i", "s" }),
+      
+          ["<Down>"] = cmp.config.disable,
+          ["<Up>"]   = cmp.config.disable,
         }),
 
         sources = cmp.config.sources({

@@ -17,18 +17,18 @@ keymap("n", "<C-l>", "<C-w>l", { desc = "Ir para janela à direita" })
 -- Limpar destaques da busca com ESC
 keymap("n", "<Esc>", "<Cmd>nohlsearch<CR>")
 --Selecionar todo o buffer
-keymap("n", "<leader>a", "0ggVG",{desc = "Selecionar todo o conteúdo do arquivo"})
+keymap("n", "<leader>a", "0ggVG",{desc = "Select all"})
 --Selecionar todo o texto do buffer
-keymap("n", "<leader>ya", ":%y<CR>", { desc = "Copiar todo o conteúdo do arquivo" })
+keymap("n", "<leader>ya", ":%y<CR>", { desc = "[y]ank/copy all the archive text"})
 --Salvar arquivo
-keymap("n", "<leader>w", ":w<CR>", { desc = "Salvar Arquivo" })
+keymap("n", "<leader>w", ":w<CR>", { desc = "Save archive" })
 --Fechar arquivo salvando
-keymap("n", "<leader>q", ":wq<CR>", { desc = "Sair e salvar" })
+keymap("n", "<leader>q", ":wq<CR>", { desc = "Save and exit" })
 --Fechar arquivo sem forçadamente
-keymap("n", "<leader>Q", ":q!<CR>", { desc = "Sair sem salvar" })
+keymap("n", "<leader>Q", ":q!<CR>", { desc = "Exit without save" })
 -- Modo de Inserção
 -- Atalho mais rápido para sair do modo de inserção
-keymap("i", "jk", "<ESC>")
+keymap("i", "fj", "<ESC>")
 
 -- Modo Visual
 
