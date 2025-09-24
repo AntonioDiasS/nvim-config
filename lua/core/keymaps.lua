@@ -17,9 +17,9 @@ keymap("n", "<C-l>", "<C-w>l", { desc = "Ir para janela à direita" })
 -- Limpar destaques da busca com ESC
 keymap("n", "<Esc>", "<Cmd>nohlsearch<CR>")
 --Selecionar todo o buffer
-keymap("n", "<leader>a", "0ggVG",{desc = "Select all"})
+keymap("n", "<leader>a", "0ggVG", { desc = "Select all" })
 --Selecionar todo o texto do buffer
-keymap("n", "<leader>ya", ":%y<CR>", { desc = "[y]ank/copy all the archive text"})
+keymap("n", "<leader>ca", ":%y<CR>", { desc = "[y]ank/[c]opy all the archive text" })
 --Salvar arquivo
 keymap("n", "<leader>w", ":w<CR>", { desc = "Save archive" })
 --Fechar arquivo salvando
@@ -29,9 +29,17 @@ keymap("n", "<leader>Q", ":q!<CR>", { desc = "Exit without save" })
 -- Modo de Inserção
 -- Atalho mais rápido para sair do modo de inserção
 keymap("i", "fj", "<ESC>")
+-- Colar no modo normal e visual com Ctrl+Shift+V
+vim.keymap.set({ "n", "v" }, "<C-S-v>", '"+p', { noremap = true, silent = true, desc = "Paste clipboard" })
+
 
 -- Modo Visual
-
+-- Copiar seleção visual com Ctrl+Shift+C
+vim.keymap.set("v", "<C-S-c>", '"+y', { noremap = true, silent = true, desc = "Copied to clipboard" })
 -- Manter a seleção ao indentar
 keymap("v", "<", "<gv")
 keymap("v", ">", ">gv")
+
+--Modo Inserção
+-- Colar no modo de inserção com Ctrl+Shift+V
+vim.keymap.set("i", "<C-S-v>", '<C-r>+', { noremap = true, silent = true, desc = "Colar do clipboard" })

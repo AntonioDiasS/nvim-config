@@ -22,16 +22,17 @@ return {
         "IblIndent4",
         "IblIndent5",
         "IblIndent6",
+        "IblIndent7",
       }
 
-      -- cria/atualiza os highlights sempre que o colorscheme for aplicado
-      hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-        vim.api.nvim_set_hl(0, "IblIndent1", { fg = "#5e81ac",  nocombine = true })
-        vim.api.nvim_set_hl(0, "IblIndent2", { fg = "#88c0d0",  nocombine = true })
-        vim.api.nvim_set_hl(0, "IblIndent3", { fg = "#81a1c1",  nocombine = true })
-        vim.api.nvim_set_hl(0, "IblIndent4", { fg = "#bf616a",  nocombine = true })
-        vim.api.nvim_set_hl(0, "IblIndent5", { fg = "#d08770",  nocombine = true })
-        vim.api.nvim_set_hl(0, "IblIndent6", { fg = "#a3be8c",  nocombine = true })
+  hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+        vim.api.nvim_set_hl(0, "IblIndent1", { fg = "#E06C75", nocombine = true }) -- vermelho
+        vim.api.nvim_set_hl(0, "IblIndent2", { fg = "#D19A66", nocombine = true }) -- laranja
+        vim.api.nvim_set_hl(0, "IblIndent3", { fg = "#E5C07B", nocombine = true }) -- amarelo
+        vim.api.nvim_set_hl(0, "IblIndent4", { fg = "#98C379", nocombine = true }) -- verde
+        vim.api.nvim_set_hl(0, "IblIndent5", { fg = "#56B6C2", nocombine = true }) -- ciano
+        vim.api.nvim_set_hl(0, "IblIndent6", { fg = "#61AFEF", nocombine = true }) -- azul
+        vim.api.nvim_set_hl(0, "IblIndent7", { fg = "#C678DD", nocombine = true }) -- violeta
       end)
 
       -- hook para scope highlight (usa treesitter; se não tiver treesitter, o scope pode não funcionar)
@@ -40,11 +41,11 @@ return {
       -- configuração do plugin
       ibl.setup({
         indent = {
-          char = "│",            -- caractere da barra (troca para "▏" se preferir mais "grossa")
-          highlight = hl,        -- usa os highlights que criámos acima
+          char = "│", -- caractere da barra (troca para "▏" se preferir mais "grossa")
+          highlight = hl, -- usa os highlights que criámos acima
         },
         scope = {
-          enabled = true,        -- mostra início/fim de escopo (usa treesitter)
+          enabled = false, -- mostra início/fim de escopo (usa treesitter)
           show_start = true,
           show_end = true,
           highlight = hl,
