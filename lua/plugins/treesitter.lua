@@ -5,19 +5,11 @@ return {
   event = { "BufReadPre", "BufNewFile" }, -- Carrega apenas ao abrir um arquivo
   opts = {
     -- Uma lista de parsers para instalar obrigatoriamente
+  
     ensure_installed = {
-      "bash",
-      "c",
-      "html",
-      "javascript",
-      "json",
-      "lua",
-      "python",
-      "query",
-      "typescript",
-      "vim",
-      "vimdoc",
-      "yaml",
+      "bash", "c", "cpp", "html", "javascript", "json", 
+      "lua", "python", "query", "r", "typescript", 
+      "vhdl", "vim", "vimdoc", "yaml",
     },
     -- Instala parsers automaticamente ao abrir arquivos novos
     auto_install = true,
@@ -28,7 +20,7 @@ return {
       -- Desabilitar para arquivos muito grandes para não travar
       disable = function(lang, buf)
           local max_filesize = 100 * 1024 -- 100 KB
-          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+          local ok, stats = pcall(vi.loop.fs_stat, vi.api.nvim_buf_get_name(buf))
           if ok and stats and stats.size > max_filesize then
               return true
           end
@@ -39,6 +31,6 @@ return {
     indent = { enable = true },
   },
   config = function(_, opts)
-    require("nvim-treesitter.configs").setup(opts)
+    require("nvim-treesitter.config").setup(opts)
   end,
 }
